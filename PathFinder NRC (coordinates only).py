@@ -231,6 +231,20 @@ def simplify(path):
 
     return path
 
+def diagonal_simplify(path):
+    # simplify diagonally (take the indices of the diagonal segment, remove them.)
+    repeat_list = []
+    for i in range(len(path) - 1):
+        if (abs(path[i + 1][0] - path[i][0]) == 1) or \
+            (abs(path[i + 1][1] - path[i][1]) == 1): 
+            if (abs(path[i - 1][0] - path[i][0]) == 1) or \
+                (abs(path[i - 1][1] - path[i][1]) == 1): repeat_list.append(i)
+        
+    print(repeat_list)
+    for j in repeat_list[::-1]: del path[j]
+
+    return path
+
 def main(start_end_cords):
 
     rows = 50
@@ -266,6 +280,9 @@ def main(start_end_cords):
 
     simplify_start = time.time()
     new_path = simplify(path_cords)
+    print(new_path)
+    new_path = diagonal_simplify(new_path)
+    print(new_path)
     print((time.time() - simplify_start))
 
 
