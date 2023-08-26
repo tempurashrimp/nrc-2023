@@ -222,7 +222,6 @@ def main(start_end_cords):
     rows = 50
     grid = make_grid(rows)
     run = True
-    started = False
 
     set_map(grid)  # add map\
 
