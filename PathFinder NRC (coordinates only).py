@@ -1,5 +1,3 @@
-# python -m pip install bresenham
-
 
 from bresenham import bresenham
 import math
@@ -64,26 +62,23 @@ class Spot:
 
     def make_line(self):
         self.state = "line"
-    # 0,0 is at the top left, y increases downwards and x increases rightwards
 
     # check if adjacent nodes exist and add to neighbours list
     def update_neighbours(self, grid):
         self.neighbours = []
-        # check if can go down
+        
         if self.x < self.total_rows - 1 and not grid[self.x + 1][self.y].is_barrier():
-            self.neighbours.append(grid[self.x + 1][self.y])
+            self.neighbours.append(grid[self.x + 1][self.y]) # go down
 
-        # check if can go up
         if self.x > 0 and not grid[self.x - 1][self.y].is_barrier():
-            self.neighbours.append(grid[self.x - 1][self.y])
+            self.neighbours.append(grid[self.x - 1][self.y]) # go up
 
-        # check if can go right
         if self.y < self.total_rows - 1 and not grid[self.x][self.y + 1].is_barrier():
-            self.neighbours.append(grid[self.x][self.y + 1])
+            self.neighbours.append(grid[self.x][self.y + 1]) # go right
 
-        # check if can go left
         if self.y > 0 and not grid[self.x][self.y - 1].is_barrier():
-            self.neighbours.append(grid[self.x][self.y - 1])
+            self.neighbours.append(grid[self.x][self.y - 1]) # go left
+        
 
 
 def h(p1, p2):  # heuristic distance
@@ -94,12 +89,15 @@ def h(p1, p2):  # heuristic distance
 
 # trace back by following parent nodes to find the shortest path after finding end
 def reconstruct_path(came_from, current):
+    global path_cords
     path_cords = []
     while current in came_from:  # came_from is a dictionary of parent nodes
         current = came_from[current]
         current.make_path()
         path_cords.append((current.x, current.y))
-    print(path_cords[::-1])
+    
+    path_cords = path_cords[::-1]
+    print(path_cords)
 
 
 def algorithm(grid, start, end):
@@ -216,6 +214,36 @@ def rect_barrier(grid, x1, y1, x2, y2):
             spot = grid[i][j]
             spot.make_barrier()
 
+def simplify(path):
+    # simplify the path to shorten
+    x_changing = False
+    repeat_list = []
+    for i in range(1, len(path)):
+        if i < (len(path) - 1): 
+            if x_changing:
+                if path[i - 1][1] == path[i][1]: repeat_list.append(i - 1)
+                else: x_changing = False
+            else: 
+                if path[i - 1][0] == path[i][0]: repeat_list.append(i - 1)
+                else: x_changing = True
+        
+    for j in repeat_list[::-1]: del path[j]
+
+    return path
+
+def diagonal_simplify(path):
+    # simplify diagonally (take the indices of the diagonal segment, remove them.)
+    repeat_list = []
+    for i in range(len(path) - 1):
+        if (abs(path[i + 1][0] - path[i][0]) == 1) or \
+            (abs(path[i + 1][1] - path[i][1]) == 1): 
+            if (abs(path[i - 1][0] - path[i][0]) == 1) or \
+                (abs(path[i - 1][1] - path[i][1]) == 1): repeat_list.append(i)
+        
+    print(repeat_list)
+    for j in repeat_list[::-1]: del path[j]
+
+    return path
 
 def main(start_end_cords):
 
@@ -223,7 +251,7 @@ def main(start_end_cords):
     grid = make_grid(rows)
     run = True
 
-    set_map(grid)  # add map\
+    set_map(grid)  # add map
 
     for i in start_end_cords:
         start_cord = i[0]
@@ -249,6 +277,13 @@ def main(start_end_cords):
             end = None
             grid = make_grid(rows)
             set_map(grid)
+
+    simplify_start = time.time()
+    new_path = simplify(path_cords)
+    print(new_path)
+    new_path = diagonal_simplify(new_path)
+    print(new_path)
+    print((time.time() - simplify_start))
 
 
 main((((3, 24), (7, 30)), ((3, 21), (20, 10))))
