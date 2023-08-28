@@ -1,9 +1,35 @@
 
-from bresenham import bresenham
 import math
 from queue import PriorityQueue
 import time
 
+def bresenham(x0, y0, x1, y1):
+    # from default bresenham in python
+
+    dx = x1 - x0
+    dy = y1 - y0
+
+    xsign = 1 if dx > 0 else -1
+    ysign = 1 if dy > 0 else -1
+
+    dx = abs(dx)
+    dy = abs(dy)
+
+    if dx > dy:
+        xx, xy, yx, yy = xsign, 0, 0, ysign
+    else:
+        dx, dy = dy, dx
+        xx, xy, yx, yy = 0, ysign, xsign, 0
+
+    D = 2*dy - dx
+    y = 0
+
+    for x in range(dx + 1):
+        yield x0 + x*xx + y*yx, y0 + x*xy + y*yy
+        if D >= 0:
+            y += 1
+            D -= 2*dx
+        D += 2*dy
 
 class Spot:
     def __init__(self, row, col, total_rows):
@@ -41,28 +67,6 @@ class Spot:
     def reset(self):
         self.state = "empty"
 
-    # making the node the colours
-    def make_closed(self):
-        self.state = "closed"
-
-    def make_open(self):
-        self.state = "open"
-
-    def make_barrier(self):
-        self.state = "barrier"
-
-    def make_start(self):
-        self.state = "start"
-
-    def make_end(self):
-        self.state = "end"
-
-    def make_path(self):
-        self.state = "purple"
-
-    def make_line(self):
-        self.state = "line"
-
     # check if adjacent nodes exist and add to neighbours list
     def update_neighbours(self, grid):
         self.neighbours = []
@@ -93,7 +97,7 @@ def reconstruct_path(came_from, current):
     path_cords = []
     while current in came_from:  # came_from is a dictionary of parent nodes
         current = came_from[current]
-        current.make_path()
+        current.state = "purple"
         path_cords.append((current.x, current.y))
     
     path_cords = path_cords[::-1]
@@ -126,8 +130,8 @@ def algorithm(grid, start, end):
             # creates shortest path back
             reconstruct_path(came_from, end)
             set_map(grid)
-            start.make_start()  # recolours start and end cuz the path will colour over them
-            end.make_end()
+            start.state = "start"  # recolours start and end cuz the path will colour over them
+            end.state = "end"
             # making path
             return True
 
@@ -149,12 +153,12 @@ def algorithm(grid, start, end):
                     open_set.put((f_score[neighbour], count, neighbour))
                     # adding neighbour into open_set_hash
                     open_set_hash.add(neighbour)
-                    neighbour.make_open()
+                    neighbour.state = "open"
 
         # calls draw function to change colours of open and closed nodes
 
         if current != start:
-            current.make_closed()  # turns open to closed
+            current.state = "closed"  # turns open to closed
 
     return False  # if there is no path from start to end
 
@@ -175,13 +179,11 @@ def draw_line(grid, x1, y1, x2, y2):
     line = list(bresenham(x1, y1, x2, y2))
     for i in range(len(line)):
         spot = grid[line[i][0]][line[i][1]]
-        spot.make_line()
+        spot.state = "line"
 
 
-def set_map(grid):  # for recreating nrc map in window (work in progress)
-    # for i in range(50):  # test line
-    #     spot = grid[i][10]
-    #     spot.make_line()
+def set_map(grid):  
+    # for recreating nrc map in window (work in progress)
     # barriers
     rect_barrier(grid, 0, 24, 49, 24)
     rect_barrier(grid, 19, 0, 20, 6)
@@ -212,7 +214,7 @@ def rect_barrier(grid, x1, y1, x2, y2):
     for i in range(x1, x2 + 1):
         for j in range(y1, y2 + 1):
             spot = grid[i][j]
-            spot.make_barrier()
+            spot.state = "barrier"
 
 def simplify(path):
     # simplify the path to shorten
@@ -261,8 +263,8 @@ def main(start_end_cords):
         while run:
             start = grid[start_cord[0]][start_cord[1]]
             end = grid[end_cord[0]][end_cord[1]]
-            start.make_start()
-            end.make_end()
+            start.state = "start"
+            end.make_end = "start"
 
             for row in grid:
                 for spot in row:
@@ -278,12 +280,11 @@ def main(start_end_cords):
             grid = make_grid(rows)
             set_map(grid)
 
-    simplify_start = time.time()
     new_path = simplify(path_cords)
     print(new_path)
     new_path = diagonal_simplify(new_path)
     print(new_path)
-    print((time.time() - simplify_start))
+    print((time.time() - start_time))
 
 
 main((((3, 24), (7, 30)), ((3, 21), (20, 10))))
