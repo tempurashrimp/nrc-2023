@@ -3,6 +3,7 @@ import math
 import time
 import heapq
 
+line = []
 
 class Spot:
     def __init__(self, row, col, total_rows):
@@ -61,6 +62,7 @@ class Spot:
 
     def make_line(self):
         self.state = "line"
+        line.append(self.get_pos())
 
     # check if adjacent nodes exist and add to neighbours list
     def update_neighbours(self, grid):
@@ -285,7 +287,6 @@ def diagonal_simplify(path):
     return path
 
 def main(start_end_cords):
-
     rows = 50
     grid = make_grid(rows)
     run = True
