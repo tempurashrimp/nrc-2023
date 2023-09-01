@@ -10,7 +10,7 @@ import runloop
 import device
 import time
 
-# 26 Aug
+# 1 September
 
 #basic functions
 
@@ -27,8 +27,8 @@ def cm(cm):        #converts cm into motor degrees
 
 
 def gyro_straight(distance, multiplier, speed):
-    #robot move straight from where its facing
-    #parameters:(distance in cm, magnitude of correction (should be pretty low), speed)
+    # robot move straight from where its facing
+    # parameters:(distance in cm, magnitude of correction (should be pretty low), speed)
     motion_sensor.reset_yaw(0)
     target = 0
     avg_dist = (abs(motor.relative_position(port.A)) + abs(motor.relative_position(port.B))) / 2
@@ -166,18 +166,14 @@ def grab_turbine():
     motor.run_for_time(port.C, 1000, 200)
     time.sleep(1.5)
     motor.stop(port.C)
-    print("fuck you 1")
     motor_pair.move_tank(motor_pair.PAIR_1, 50, 50)
     time.sleep(2)
     motor_pair.stop(motor_pair.PAIR_1)
-    print("fuck you24")
     motor.run_for_time(port.C, 1000, -200)
     time.sleep(1.5)
-    print("fuck you2")
     motor_pair.move_tank(motor_pair.PAIR_1, -100, -100)
     time.sleep(1)
     motor_pair.stop(motor_pair.PAIR_1)
-    print("fuck yo3u")
 
 def dispense_turbine():
     motor.run_for_time(port.C, 1000, 200)
@@ -188,6 +184,7 @@ def dispense_turbine():
     motor_pair.stop(motor_pair.PAIR_1)
 
 def grab_tray():
+    # temporary grab tray
     motor.run_for_time(port.D, 1000, -200)
     time.sleep(1.5)
     motor.stop(port.D)
@@ -222,7 +219,10 @@ def grab_tray():
     motor.stop(port.D)
 
 
-
+# ptp a* (tbc)
+def astar(path):
+    for coord in path:
+        pass
 
 
 #main
