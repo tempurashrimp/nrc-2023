@@ -167,7 +167,6 @@ def algorithm(grid, start, end):
         if current == end:
             # creates shortest path back
             reconstruct_path(came_from, end)
-            set_map(grid)
             start.make_start()  # recolours start and end cuz the path will colour over them
             end.make_end()
             # making path
@@ -247,6 +246,7 @@ def set_map(grid):  # for recreating nrc map in window (work in progress)
     draw_line(grid, 31, 12, 33, 16)
     draw_line(grid, 33, 16, 33, 17)
     draw_line(grid, 34, 10, 41, 10)
+    print("set_map")
 
 
 def rect_barrier(grid, x1, y1, x2, y2):
@@ -281,12 +281,11 @@ def diagonal_simplify(path):
             if (abs(path[i - 1][0] - path[i][0]) == 1) or \
                 (abs(path[i - 1][1] - path[i][1]) == 1): repeat_list.append(i)
         
-    print(repeat_list)
     for j in repeat_list[::-1]: del path[j]
 
     return path
 
-def main(start_end_cords):
+def main(start_cord, end_cord):
     rows = 50
     grid = make_grid(rows)
     run = True
@@ -294,38 +293,33 @@ def main(start_end_cords):
 
     set_map(grid)  # add map
 
-    for i in start_end_cords:
-        start_cord = i[0]
-        end_cord = i[1]
-        run = True
-        start_time = time.time()
-        while run:
-            start = grid[start_cord[0]][start_cord[1]]
-            end = grid[end_cord[0]][end_cord[1]]
-            start.make_start()
-            end.make_end()
+    run = True
+    start_time = time.time()
+    while run:
+        start = grid[start_cord[0]][start_cord[1]]
+        end = grid[end_cord[0]][end_cord[1]]
+        start.make_start()
+        end.make_end()
 
-            for row in grid:
-                for spot in row:
-                    # creates list of neighbours for every spot
-                    spot.update_neighbours(grid)
+        for row in grid:
+            for spot in row:
+                # creates list of neighbours for every spot
+                spot.update_neighbours(grid)
 
-            if algorithm(grid, start, end): #performs algorithm
-                end_time = time.time()
-                print(end_time - start_time)
-                run = False
+        if algorithm(grid, start, end): #performs algorithm
+            end_time = time.time()
+            run = False
 
-            start = None
-            end = None
-            grid = make_grid(rows)
-            set_map(grid)
+        start = None
+        end = None
+        grid = make_grid(rows)
 
     new_path = simplify(path_cords)
     print(new_path)
     new_path = diagonal_simplify(new_path)
-    new_path.append(start_end_cords[1][1])
+    new_path.append(end_cord)
     print(new_path)
     print((time.time() - test))
 
 
-main((((3, 24), (7, 30)), ((3, 21), (20, 10))))
+main((3, 21), (20, 10))

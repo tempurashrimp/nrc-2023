@@ -305,8 +305,7 @@ def diagonal_simplify(path):
 
     return path
 
-def astar(start_end_cords):
-
+def astar(start_cord, end_cord):
     rows = 50
     grid = make_grid(rows)
     run = True
@@ -314,40 +313,37 @@ def astar(start_end_cords):
 
     set_map(grid)  # add map
 
-    for i in start_end_cords:
-        start_cord = i[0]
-        end_cord = i[1]
-        run = True
-        start_time = time.time()
-        while run:
-            start = grid[start_cord[0]][start_cord[1]]
-            end = grid[end_cord[0]][end_cord[1]]
-            start.make_start()
-            end.make_end()
+    run = True
+    start_time = time.time()
+    while run:
+        start = grid[start_cord[0]][start_cord[1]]
+        end = grid[end_cord[0]][end_cord[1]]
+        start.make_start()
+        end.make_end()
 
-            for row in grid:
-                for spot in row:
-                    # creates list of neighbours for every spot
-                    spot.update_neighbours(grid)
+        for row in grid:
+            for spot in row:
+                # creates list of neighbours for every spot
+                spot.update_neighbours(grid)
 
-            if algorithm(grid, start, end): #performs algorithm
-                end_time = time.time()
-                print(end_time - start_time)
-                run = False
+        if algorithm(grid, start, end): #performs algorithm
+            end_time = time.time()
+            print(end_time - start_time)
+            run = False
 
-            start = None
-            end = None
-            grid = make_grid(rows)
-            set_map(grid)
+        start = None
+        end = None
+        grid = make_grid(rows)
 
     new_path = simplify(path_cords)
+    print(new_path)
     new_path = diagonal_simplify(new_path)
-    new_path.append(start_end_cords[1][1])
+    new_path.append(end_cord)
+    print(new_path)
+    print((time.time() - test))
 
-    return new_path
-
-def astar_pid(start_end_cords, speed):
-    path = astar(start_end_cords)
+def astar_pid(start_cord, end_cord, speed):
+    path = astar(start_cord, end_cord)
     for i in range(1, len(path)):
         ptp(path[i - 1], path[i], speed)
             
@@ -565,7 +561,7 @@ def main():
     # PID_l(78, 0, 0, 3, 100)      #2, 0, 1.5, 400
     # ots_turn(185, 200)
     # ptp((-5, 16), (-20, 16), 200)
-    astar_pid((((3, 24), (7, 30)), ((3, 21), (20, 10))), 200)
+    astar_pid((3, 24), (7, 20), 200)
 
 
 main()
