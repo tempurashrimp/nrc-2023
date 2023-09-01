@@ -219,7 +219,10 @@ def grab_tray():
     motor.stop(port.D)
 
 
-
+# ptp a* (tbc)
+def astar(path):
+    for coord in path:
+        pass
 
 
 #main
