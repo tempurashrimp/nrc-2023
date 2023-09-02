@@ -43,7 +43,7 @@ class Spot:
         # for fidning coordinates on computer screen
         self.x = row
         self.y = col
-        self.state = "empty"
+        self.state = 0
         self.neighbours = []
         self.total_rows = total_rows
 
@@ -53,48 +53,48 @@ class Spot:
 
     # whether a node has been looked at
     def is_closed(self):
-        return self.state == "closed"
+        return self.state == 1
 
     # whether node hasnt been looked at
     def is_open(self):
-        return self.state == "open"
+        return self.state == 2
 
     def is_barrier(self):
-        return self.state == "barrier"
+        return self.state == 3
 
     # if node is end node
     def is_end(self):
-        return self.state == "end"
+        return self.state == 4
 
     # if node is linetraceable line
     def is_line(self):
-        return self.state == "line"
+        return self.state == 6
 
     # to change the colour back to white
     def reset(self):
-        self.state = "empty"
+        self.state = 0
 
     # making the node the colours
     def make_closed(self):
-        self.state = "closed"
+        self.state = 1
 
     def make_open(self):
-        self.state = "open"
+        self.state = 2
 
     def make_barrier(self):
-        self.state = "barrier"
+        self.state = 3
 
     def make_start(self):
-        self.state = "start"
+        self.state = 4
 
     def make_end(self):
-        self.state = "end"
+        self.state = 4
 
     def make_path(self):
-        self.state = "purple"
+        self.state = 5
 
     def make_line(self):
-        self.state = "line"
+        self.state = 6
         line.append(self.get_pos())
 
     # check if adjacent nodes exist and add to neighbours list
