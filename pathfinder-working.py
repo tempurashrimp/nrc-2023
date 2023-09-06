@@ -245,7 +245,7 @@ def set_map(grid):  # for recreating nrc map in window (work in progress)
     rect_barrier(grid, 14, 18, 21, 23)
     rect_barrier(grid, 2, 15, 5, 18)
 
-    '''# lines (left to right)
+    # lines (left to right)
     draw_line(grid, 5, 16, 8, 16)
     draw_line(grid, 8, 16, 13, 11)
     draw_line(grid, 13, 11, 13, 5)
@@ -261,7 +261,7 @@ def set_map(grid):  # for recreating nrc map in window (work in progress)
     draw_line(grid, 33, 16, 33, 17)
     draw_line(grid, 34, 10, 41, 10)
     print("set_map")
-    print(line)'''
+    
 
 
 def rect_barrier(grid, x1, y1, x2, y2):
@@ -272,7 +272,7 @@ def rect_barrier(grid, x1, y1, x2, y2):
 
 def simplify(path):
     # simplify the path to shorten
-    x_changing = False
+    x_changing = True
     repeat_list = []
     for i in range(1, len(path)):
         if i < (len(path) - 1): 
@@ -337,4 +337,4 @@ def main(start_cord, end_cord):
     print((time.time() - test))
 
 
-main((3, 21), (20, 10))
+main((13, 5), (23, 3))

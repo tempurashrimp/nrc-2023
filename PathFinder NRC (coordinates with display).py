@@ -326,4 +326,4 @@ def main(win, width, start_end_cords):
     pygame.quit()
 
 
-main(WIN, WIDTH, (((3, 24), (7, 30)), ((3, 21), (20, 10))))
+main(WIN, WIDTH, (((29, 10), (5, 16)), ((29, 10), (17, 18))))

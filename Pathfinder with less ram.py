@@ -4,10 +4,10 @@ import math
 import time
 import heapq
 import tracemalloc
+import gc
 
 
 tracemalloc.start()
-
 
 line = [(5, 16), (6, 16), (7, 16), (8, 16), (8, 16),
         (9, 15), (10, 14), (11, 13), (12, 12), (13, 11),
@@ -25,11 +25,6 @@ line = [(5, 16), (6, 16), (7, 16), (8, 16), (8, 16),
         (33, 17), (34, 10), (35, 10), (36, 10), (37, 10), (38, 10), (39, 10),
         (40, 10), (41, 10)]
 
-
-# for i in range(len(line)): #convert line list to binary
-#     line[i] = list(line[i])
-#     for j in range(2):
-#         line[i][j] = bin(line[i][j])
 
 
 class Spot:
@@ -137,6 +132,7 @@ def bresenham(x0, y0, x1, y1):
             D -= 2*dx
         D += 2*dy
 
+    
 
 class PriorityQueue:
     # self-made priority queue
@@ -167,12 +163,11 @@ def reconstruct_path(came_from, current):
         current = came_from[current]
         current.make_path()
         path_cords.append((current.x, current.y))
-
+    
     print("reconstruct path", tracemalloc.get_traced_memory())
     tracemalloc.reset_peak()
 
     path_cords = path_cords[::-1]
-    print(path_cords)
     return path_cords
 
 
@@ -232,6 +227,7 @@ def algorithm(grid, start, end):
 
     print("algorithm", tracemalloc.get_traced_memory())
     tracemalloc.reset_peak()
+    gc.collect()
     return False  # if there is no path from start to end
 
 
@@ -241,10 +237,10 @@ def make_grid():
         grid.append([])
         for j in range(ly, hy + 1):
             # (row, col, width(of spot), no_of_rows)     creating nodes
-            print(i, j)
             spot = Spot(i, j)
             grid[i - lx].append(spot)  # adding nodes
-    print(len(grid), len(grid[i - lx]))
+    
+    gc.collect()
     print("make grid", tracemalloc.get_traced_memory())
     tracemalloc.reset_peak()
     return grid
@@ -272,23 +268,6 @@ def set_map(grid):  # for recreating nrc map in window (work in progress)
     rect_barrier(grid, 14, 18, 21, 23)
     rect_barrier(grid, 2, 15, 5, 18)
 
-    '''# lines (left to right)
-    draw_line(grid, 5, 16, 8, 16)
-    draw_line(grid, 8, 16, 13, 11)
-    draw_line(grid, 13, 11, 13, 5)
-    draw_line(grid, 13, 11, 17, 15)
-    draw_line(grid, 14, 12, 31, 12)
-    draw_line(grid, 17, 15, 17, 18)
-    draw_line(grid, 24, 4, 24, 7)
-    draw_line(grid, 24, 7, 26, 8)
-    draw_line(grid, 26, 8, 31, 8)
-    draw_line(grid, 31, 8, 34, 10)
-    draw_line(grid, 31, 12, 42, 3)
-    draw_line(grid, 31, 12, 33, 16)
-    draw_line(grid, 33, 16, 33, 17)
-    draw_line(grid, 34, 10, 41, 10)
-    print("set_map")
-    print(line)'''
     print("set map", tracemalloc.get_traced_memory())
     tracemalloc.reset_peak()
 
@@ -302,7 +281,7 @@ def rect_barrier(grid, x1, y1, x2, y2):
                 continue
             spot = grid[i - lx][j - ly]
             spot.make_barrier()
-
+    
 
 def simplify(path):
     # simplify the path to shorten
@@ -324,6 +303,7 @@ def simplify(path):
     for j in repeat_list[::-1]:
         del path[j]
 
+    gc.collect()
     print("simplify", tracemalloc.get_traced_memory())
     tracemalloc.reset_peak()
 
@@ -339,9 +319,10 @@ def diagonal_simplify(path):
             if (abs(path[i - 1][0] - path[i][0]) == 1) or \
                     (abs(path[i - 1][1] - path[i][1]) == 1):
                 repeat_list.append(i)
-
+    
     for j in repeat_list[::-1]:
         del path[j]
+
     print("diagonal simplify", tracemalloc.get_traced_memory())
     tracemalloc.reset_peak()
 
@@ -378,6 +359,7 @@ def main(start_cord, end_cord):
             for spot in row:
                 # creates list of neighbours for every spot
                 spot.update_neighbours(grid)
+        gc.collect()
 
         if algorithm(grid, start, end):  # performs algorithm
             end_time = time.time()
@@ -395,7 +377,7 @@ def main(start_cord, end_cord):
     print((time.time() - test))
 
 
-main((47, 21), (20, 10))  # x1 < 20, y1 < 24, x2 < 20, y2 < 24
+main((13, 5), (23, 3))  
 
 
 # displaying the memory
